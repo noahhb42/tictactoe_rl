@@ -1,6 +1,6 @@
 # TicTacToe RL (SB3 PPO)
 
-A RL setup to make a tic-tac-toe agent that never loses.
+A RL setup to make a tic-tac-toe agent that never loses as the first player.
 
 ## Setup
 ```bash
