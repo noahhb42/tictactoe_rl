@@ -43,7 +43,7 @@ def main():
 
     while not done:
         print("\nCurrent board:")
-        print(env.render())
+        env.render()
 
         move_str = input("Your move: ")
         try:
@@ -61,7 +61,7 @@ def main():
 
         if done:
             print("\nFinal board:")
-            print(env.render())
+            env.render()
             if info.get("winner") == 1:
                 print("You win!")
             elif info.get("winner") == -1:
