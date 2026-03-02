@@ -1,36 +1,61 @@
 from __future__ import annotations
 
 import argparse
+import random
 from pathlib import Path
+from typing import Callable
 
-import gymnasium as gym
-from stable_baselines3 import PPO
 from stable_baselines3.common.env_util import make_vec_env
+from sb3_contrib import MaskablePPO
+from sb3_contrib.common.wrappers import ActionMasker
 
 from tictactoe_env import TicTacToeEnv
-from opponents import random_opponent, heuristic_opponent
+from opponents import random_opponent, heuristic_opponent, minimax_opponent
 
 
-def make_env(opponent: str):
-    if opponent == "random":
-        opp = random_opponent
-    elif opponent == "heuristic":
-        opp = heuristic_opponent
-    else:
-        raise ValueError("opponent must be of form 'random' or 'heuristic'")
-    
+def mask_fn(env: TicTacToeEnv):
+    return env.action_masks()
+
+
+def make_opponent(name: str) -> Callable:
+    if name == "random":
+        return random_opponent
+    if name == "heuristic":
+        return heuristic_opponent
+    if name == "minimax":
+        return minimax_opponent
+    if name == "mixed":
+        # Mix all three so the policy generalizes:
+        # random makes it learn winning fast, minimax makes it learn not to lose.
+        def mixed(board):
+            r = random.random()
+            if r < 0.40:
+                return random_opponent(board)
+            elif r < 0.80:
+                return heuristic_opponent(board)
+            else:
+                return minimax_opponent(board)
+        return mixed
+    raise ValueError("opponent must be one of: random, heuristic, minimax, mixed")
+
+
+def make_env(opponent_name: str):
+    opp = make_opponent(opponent_name)
+
     def _thunk():
-        return TicTacToeEnv(opponent_policy=opp, step_penalty=-0.01, invalid_move_penalty=-1.0)
-    
+        env = TicTacToeEnv(opponent_policy=opp, step_penalty=-0.01, invalid_move_penalty=-1.0)
+        env = ActionMasker(env, mask_fn)
+        return env
+
     return _thunk
 
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--timesteps", type=int, default=300_000)
-    parser.add_argument("--opponent", choices=["random","heuristic"], default="random")
+    parser.add_argument("--timesteps", type=int, default=800_000)
+    parser.add_argument("--opponent", choices=["random", "heuristic", "minimax", "mixed"], default="mixed")
     parser.add_argument("--n-envs", type=int, default=8)
-    parser.add_argument("--save_path", type=str, default="models/ppo_tictactoe")
+    parser.add_argument("--save-path", type=str, default="models/maskppo_tictactoe")
     args = parser.parse_args()
 
     save_path = Path(args.save_path)
@@ -38,7 +63,7 @@ def main():
 
     vec_env = make_vec_env(make_env(args.opponent), n_envs=args.n_envs)
 
-    model = PPO(
+    model = MaskablePPO(
         policy="MlpPolicy",
         env=vec_env,
         verbose=1,
@@ -53,7 +78,7 @@ def main():
     model.save(str(save_path))
 
     vec_env.close()
-    print(f"Saved model to: {save_path}")
+    print(f"Saved model to: {save_path}.zip")
 
 
 if __name__ == "__main__":

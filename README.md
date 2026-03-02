@@ -7,22 +7,19 @@ source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
-## Play (no training)
-```bash
-python play_human.py --opponent random
-python play_human.py --opponent heuristic
-```
-
 ## Train
 ```bash
-python train_ppo.py --opponent random --timesteps 300000
-# or
-python train_ppo.py --opponent heuristic --timesteps 600000
+python train_ppo.py --opponent mixed --timesteps 600000 --save-path models/ppo_tictactoe
+```
+
+## Evaluate model
+```bash
+python evaluate.py --model models/ppo_tictactoe.zip --opponent random --episodes 1000 --deterministic
+python evaluate.py --model models/ppo_tictactoe.zip --opponent heuristic --episodes 1000 --deterministic
+python evaluate.py --model models/ppo_tictactoe.zip --opponent minimax --episodes 1000 --deterministic
 ```
 
 ## Play vs the trained model
 ```bash
 python play_vs_model.py --model models/ppo_tictactoe.zip --you O
-# optional:
-python play_vs_model.py --model models/ppo_tictactoe.zip --you X
 ```
