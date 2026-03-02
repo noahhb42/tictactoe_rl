@@ -91,7 +91,7 @@ class TicTacToeEnv(gym.Env):
         return np.concatenate([self.board, np.array([self.current_player], dtype = np.int8)])
 
     def reset(self, *, seed: Optional[int] = None, options: Optional[dict] = None):
-        super.reset(seed = seed)
+        super().reset(seed = seed)
         self.board[:] = 0
         self.current_player = np.int8(1)
         self._last_info = {"winner": 0, "draw": False, "invalid_move": False}
