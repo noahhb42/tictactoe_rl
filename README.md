@@ -1,5 +1,7 @@
 # TicTacToe RL (SB3 PPO)
 
+A RL setup to make a tic-tac-toe agent that never loses.
+
 ## Setup
 ```bash
 python3 -m venv .venv
