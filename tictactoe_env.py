@@ -162,11 +162,11 @@ class TicTacToeEnv(gym.Env):
         symbols = {1: "X", -1: "O", 0: " "}
         b = [symbols[int(v)] for v in self.board]
         rows = [
-            f"{b[0]} | {b[1]} | {b[2]}",
-            f"{b[3]} | {b[4]} | {b[5]}",
-            f"{b[6]} | {b[7]} | {b[8]}",
+            f" {b[0]} | {b[1]} | {b[2]} ",
+            f" {b[3]} | {b[4]} | {b[5]} ",
+            f" {b[6]} | {b[7]} | {b[8]} ",
         ]
-        sep = "--+--+--"
+        sep = "---+---+---"
         s = "\n".join([rows[0], sep, rows[1], sep, rows[2]])
         if self.render_mode == "human":
             print(s)
