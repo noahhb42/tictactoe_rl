@@ -1,15 +1,28 @@
-## Install
-python -m venv .venv
+# TicTacToe RL (SB3 PPO)
+
+## Setup
+```bash
+python3 -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
+```
 
-## Play vs baseline (no training)
+## Play (no training)
+```bash
 python play_human.py --opponent random
 python play_human.py --opponent heuristic
+```
 
-## Train PPO
+## Train
+```bash
 python train_ppo.py --opponent random --timesteps 300000
-# model saved to models/ppo_tictactoe(.zip)
+# or
+python train_ppo.py --opponent heuristic --timesteps 600000
+```
 
-## Play against trained model (or watch it play)
-python play_model.py --model models/ppo_tictactoe.zip --opponent heuristic
+## Play vs the trained model
+```bash
+python play_vs_model.py --model models/ppo_tictactoe.zip --you O
+# optional:
+python play_vs_model.py --model models/ppo_tictactoe.zip --you X
+```
