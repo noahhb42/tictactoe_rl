@@ -166,7 +166,7 @@ class TicTacToeEnv(gym.Env):
             f"{b[3]} | {b[4]} | {b[5]}",
             f"{b[6]} | {b[7]} | {b[8]}",
         ]
-        sep = "---+---+---"
+        sep = "--+--+--"
         s = "\n".join([rows[0], sep, rows[1], sep, rows[2]])
         if self.render_mode == "human":
             print(s)
